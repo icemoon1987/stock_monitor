@@ -7,11 +7,8 @@ import matplotlib.pyplot as plt
 from model.lundong import lundong
 from define import *
 
-
 def load_data(file_path):
-
     result = []
-
     print "loading: " + file_path
 
     f = open(file_path)
