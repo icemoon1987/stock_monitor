@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+#coding=utf-8
+
+DATE_POS = 0
+OPEN_PRICE_POS = 1
+HIGH_PRICE_POS = 2
+CLOSE_PRICE_POS = 3
+LOW_PRICE_POS = 4
+VOLUMN_POS = 5
