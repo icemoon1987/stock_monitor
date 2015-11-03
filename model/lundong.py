@@ -24,7 +24,7 @@ class lundong(object):
 		return []
 
 
-	def get_trading_plan(self, dataset1, dataset2, dataset1_name, dataset2_name, date_str, days_gap, last_valid_trading_plan):
+	def get_trading_plan(self, dataset1, dataset2, dataset1_name, dataset2_name, date_str, days_gap, trading_day, last_valid_trading_plan):
 		"""
 		get trading plan of 28 lundong model, return a empty map when no decision can be made
 
@@ -88,8 +88,9 @@ class lundong(object):
 			choise = -1
 
 		# if it is not friday, don't trade
-		if datetime.strptime(date_str, "%Y-%m-%d").weekday() != 4:
-			choise = -1
+		if trading_day < 5:
+			if datetime.strptime(date_str, "%Y-%m-%d").weekday() != trading_day:
+				choise = -1
 
 		# if the same decision as last time, do not trade
 		if last_valid_trading_plan != {} and choise == last_valid_trading_plan["choise"]:

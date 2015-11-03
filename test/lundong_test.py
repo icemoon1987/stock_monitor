@@ -8,6 +8,7 @@ from model.lundong import lundong
 from define import *
 from account_simulator import account_simulator
 import math
+from datetime import datetime
 
 def load_data(file_path):
     """
@@ -71,7 +72,35 @@ def pre_process(data1, data2):
     return
 
 
-def test(data1, data2, data1_name, data2_name, start_money):
+def pre_process_2(data1, data2, start_date_str, end_date_str):
+
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+    i = 0
+    while i < len(data1):
+        date1 = datetime.strptime(data1[i][DATE_POS], "%Y-%m-%d")
+
+        # Delete redundant data in dataset1
+        if date1 < start_date or date1 > end_date:
+            del data1[i]
+        else:
+            i = i + 1
+
+    i = 0
+    while i < len(data2):
+        date2 = datetime.strptime(data2[i][DATE_POS], "%Y-%m-%d")
+
+        # Delete redundant data in dataset1
+        if date2 < start_date or date2 > end_date:
+            del data2[i]
+        else:
+            i = i + 1
+
+    return
+
+
+def test(data1, data2, data1_name, data2_name, start_money, gap_days, trading_day):
     """
     lundong model test
     """
@@ -82,6 +111,7 @@ def test(data1, data2, data1_name, data2_name, start_money):
     # Preprocess datasets
     print "preprocessing datasets..."
     pre_process(data1, data2)
+    #pre_process_2(data1, data2, "2007-02-04", "2008-02-04")
 
     print "Dataset1: %s, data_len=%d, start_date=%s, end_date=%s" % (data1_name, len(data1), data1[0][DATE_POS], data1[-1][DATE_POS])
     print "Dataset2: %s, data_len=%d, start_date=%s, end_date=%s" % (data2_name, len(data2), data2[0][DATE_POS], data2[-1][DATE_POS])
@@ -93,7 +123,7 @@ def test(data1, data2, data1_name, data2_name, start_money):
     plt.figure(1)
     plt.subplot(311)
     plt.plot(data1_close_price, 'b-', data2_close_price, 'r-')
-    plt.legend([data1_name, data2_name], loc="upper right")
+    plt.legend([data1_name, data2_name], loc="upper left")
     plt.grid(True)
 
     # Initilize a lundong model, and get trading decisions by it
@@ -108,7 +138,7 @@ def test(data1, data2, data1_name, data2_name, start_money):
     last_valid_trading_plan = {}
 
     for item in data1:
-        trading_plan = lundong_model.get_trading_plan(data1, data2, data1_name, data2_name, item[DATE_POS], 28, last_valid_trading_plan)
+        trading_plan = lundong_model.get_trading_plan(data1, data2, data1_name, data2_name, item[DATE_POS], gap_days, trading_day, last_valid_trading_plan)
 
         # if there is a trading plan
         if trading_plan != {}:
@@ -156,6 +186,7 @@ def test(data1, data2, data1_name, data2_name, start_money):
             pass
 
         money.append(account.get_value())
+        #money.append(account.money)
         result.append(trading_plan)
 
         if trading_plan != {} and trading_plan["choise"] != -1:
@@ -197,18 +228,20 @@ def test(data1, data2, data1_name, data2_name, start_money):
         choise_0_index, choise_0, 'bo', choise_1_index, choise_1, 'ro',\
         choise_2_index, choise_2, 'r^')
     #plt.plot(data1_up, 'b-', data2_up, 'r-', choise_0, 'bo', choise_1, 'r^')
-    plt.legend([data1_name, data2_name, "switch to:" + data1_name, "switch to:" + data2_name, "sell all"], loc="upper right")
+    plt.legend([data1_name, data2_name, "switch to:" + data1_name, "switch to:" + data2_name, "sell all"], loc="upper left")
     plt.grid(True)
 
     plt.subplot(313)
-    plt.plot([item / start_money for item in money], 'b-')
-    plt.legend(["gain rate"], loc="upper right")
+    plt.plot([item / start_money for item in money], 'g-', \
+        [ float(item[CLOSE_PRICE_POS]) / float(data1[0][CLOSE_PRICE_POS]) for item in data1], 'b-', \
+        [ float(item[CLOSE_PRICE_POS]) / float(data2[0][CLOSE_PRICE_POS]) for item in data2], 'r-')
+    plt.legend(["model", data1_name, data2_name], loc="upper left")
     plt.grid(True)
-    plt.show()
+    #plt.show()
 
     account.dump()
 
-    return
+    return account.get_value() / start_money
 
 if __name__ == "__main__":
 
@@ -216,5 +249,18 @@ if __name__ == "__main__":
     sh000300_data = load_data("../data/sh000300_day")
 
     #test(sh000905_data[-200:-1], sh000300_data[-200:-1], "sh000905", "sh000300", 100000)
-    test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000)
+    #test(sh000905_data[0:1000], sh000300_data[0:1000], "sh000905", "sh000300", 100000)
+    gain_rate = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, 28, 4)
+
+    gain_rates = []
+    for i in range(0,6):
+        result = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, 28, i)
+        print "gap_days:", i, " gain_rates:", result
+        gain_rates.append(result)
+
+    print gain_rates
+
+    plt.figure(2)
+    plt.plot(range(0,6), gain_rates, 'r-')
+    plt.show()
 
