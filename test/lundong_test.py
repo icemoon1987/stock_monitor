@@ -251,7 +251,9 @@ if __name__ == "__main__":
     #test(sh000905_data[-200:-1], sh000300_data[-200:-1], "sh000905", "sh000300", 100000)
     #test(sh000905_data[0:1000], sh000300_data[0:1000], "sh000905", "sh000300", 100000)
     gain_rate = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, 28, 4)
+    plt.show()
 
+    """
     gain_rates = []
     for i in range(0,6):
         result = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, 28, i)
@@ -263,4 +265,5 @@ if __name__ == "__main__":
     plt.figure(2)
     plt.plot(range(0,6), gain_rates, 'r-')
     plt.show()
+    """
 
