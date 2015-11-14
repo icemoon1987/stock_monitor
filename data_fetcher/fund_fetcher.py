@@ -40,24 +40,28 @@ class fund_fetcher(object):
 
             for content in contents:
 
-                tmp = {}
-                date = content.xpath("./td/text()")[0]
-                close_price = float(content.xpath("./td/text()")[1])
-                acc_close_price = float(content.xpath("./td/text()")[2])
-                rise_rate = float(content.xpath("./td/text()")[3][:-1]) / 100
-                buy_status = content.xpath("./td/text()")[4]
-                sell_status = content.xpath("./td/text()")[5]
-                #meta = content.xpath("./td/text()")[6]
+                try:
 
-                tmp["date"] = date
-                tmp["close_price"] = close_price
-                tmp["acc_close_price"] = acc_close_price
-                tmp["rise_rate"] = rise_rate
-                tmp["buy_status"] = buy_status
-                tmp["sell_status"] = sell_status
-                #tmp["meta"] = meta
+                    tmp = {}
+                    date = content.xpath("./td/text()")[0]
+                    close_price = float(content.xpath("./td/text()")[1])
+                    acc_close_price = float(content.xpath("./td/text()")[2])
+                    rise_rate = float(content.xpath("./td/text()")[3][:-1]) / 100
+                    buy_status = content.xpath("./td/text()")[4]
+                    sell_status = content.xpath("./td/text()")[5]
+                    #meta = content.xpath("./td/text()")[6]
 
-                result.append(tmp)
+                    tmp["date"] = date
+                    tmp["close_price"] = close_price
+                    tmp["acc_close_price"] = acc_close_price
+                    tmp["rise_rate"] = rise_rate
+                    tmp["buy_status"] = buy_status
+                    tmp["sell_status"] = sell_status
+                    #tmp["meta"] = meta
+
+                    result.append(tmp)
+                except Exception, ex:
+                    continue
 
         except Exception, ex:
             print ex.__str__()
