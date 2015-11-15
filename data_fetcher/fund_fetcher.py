@@ -2,12 +2,15 @@
 #coding=utf-8
 
 import sys
+sys.path.append("..")
 import re
 import urllib
 import myjson
 from datetime import datetime
 import  time 
 from lxml import etree
+from data_interface.stock_dataset import stock_dataset
+from data_interface.stock_data import stock_data
 
 class fund_fetcher(object):
 
@@ -16,7 +19,7 @@ class fund_fetcher(object):
 
     def get_his_day_k(self, fundid, begindate, enddate):
 
-        result = []
+        raw_result = []
 
         try:
             begindate_str = datetime.strptime(begindate, "%Y%m%d").strftime("%Y-%m-%d")
@@ -25,23 +28,14 @@ class fund_fetcher(object):
             url = "http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=%s&page=1&per=5000&sdate=%s&edate=%s&rt=0.7955276783627965"\
                 % (fundid, begindate_str, enddate_str)
 
-            print url
-
             data = urllib.urlopen(url).read()
-
             m = re.match(r'.*content:"(.*)"', data)
-            #m = re.match(r'.*', data)
-
             html_data = m.group(1)
-
             tree = etree.HTML(html_data)
-
             contents = tree.xpath("//tbody/tr")
 
             for content in contents:
-
                 try:
-
                     tmp = {}
                     date = content.xpath("./td/text()")[0]
                     close_price = float(content.xpath("./td/text()")[1])
@@ -59,57 +53,39 @@ class fund_fetcher(object):
                     tmp["sell_status"] = sell_status
                     #tmp["meta"] = meta
 
-                    result.append(tmp)
+                    raw_result.append(tmp)
                 except Exception, ex:
                     continue
 
         except Exception, ex:
             print ex.__str__()
-            return {}
+            return None
 
-        return result
-
-
-    def post_process(self, data_list):
-        data_list.reverse()
-
-        for i in range(len(data_list)):
+        raw_result.reverse()
+        for i in range(len(raw_result)):
             if i != 0:
-                data_list[i]["acc_close_price"] = data_list[i-1]["acc_close_price"] * (1 + data_list[i]["rise_rate"])
+                raw_result[i]["acc_close_price"] = raw_result[i-1]["acc_close_price"] * (1 + raw_result[i]["rise_rate"])
 
-        return result
+        dataset = stock_dataset()
+        dataset.name = fundid
 
+        for item in raw_result:
+            stock = stock_data()
+            stock.date = item["date"]
+            stock.close_price = item["acc_close_price"]
 
-    def store_to_file(self, result, file_path):
+            dataset.data.append(stock)
 
-        try:
-            f = open(file_path, 'w')
+        return dataset
 
-            for item in result:
-                f.write("%s,%s,%s,%s,%s,%s\n" % \
-                    (str(item["date"]), "0", "0", str(item["acc_close_price"]),\
-                    "0", "0")) 
-
-            f.close()
-
-        except Exception, ex:
-            print ex.__str__()
-
-        return
 
 if __name__ == "__main__":
 
-    if len(sys.argv) >= 4:
-        fetcher = fund_fetcher()
-        result = fetcher.get_his_day_k(sys.argv[1], sys.argv[2], sys.argv[3])
+    fetcher = fund_fetcher()
 
-        print result
+    result = fetcher.get_his_day_k("270026", "20001101", "20151115")
 
-        fetcher.post_process(result)
+    result.dump()
 
-        print result
 
-    if len(sys.argv) == 5:
-        fetcher.store_to_file(result, sys.argv[4])
-        print "store to file: " + sys.argv[1]
     
