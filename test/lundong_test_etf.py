@@ -149,9 +149,9 @@ def test(data1, data2, data1_name, data2_name, data1_price, data2_price, data1_p
 	data1_price_close_price = [ item[CLOSE_PRICE_POS] for item in data1_price ]
 	data2_price_close_price = [ item[CLOSE_PRICE_POS] for item in data2_price ]
 
-	#analyser = data_analyser()
-	#analyser.draw_relevance(data1_close_price, data1_price_close_price, data1_name, data1_price_name)
-	#analyser.draw_relevance(data2_close_price, data2_price_close_price, data2_name, data2_price_name)
+	analyser = data_analyser()
+	analyser.draw_relevance(data1_close_price, data1_price_close_price, data1_name, data1_price_name)
+	analyser.draw_relevance(data2_close_price, data2_price_close_price, data2_name, data2_price_name)
 
 	plt.figure(1)
 	plt.subplot(311)
