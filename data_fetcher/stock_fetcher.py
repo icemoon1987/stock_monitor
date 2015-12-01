@@ -55,6 +55,57 @@ class stock_fetcher(object):
 
         return result
 
+
+    def get_his_hour_k(self, stockid):
+
+        result = stock_dataset()
+        result.name = stockid
+
+        i = 0
+        while i < self.repeat_num:
+            try:
+                url = "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=%s&scale=60&ma=no&datalen=1023" % (stockid)
+                data = urllib.urlopen(url).read()
+                
+                data = data[2:-2]
+
+                ary = data.split("},{")
+
+                print len(ary)
+
+                for item in ary:
+                    stock = stock_data()
+
+                    m = re.match(r'.*day:"(.*?)"', item)
+                    stock.date = m.group(1)
+
+                    m = re.match(r'.*open:"(.*?)"', item)
+                    stock.open_price = float(m.group(1))
+
+                    m = re.match(r'.*high:"(.*?)"', item)
+                    stock.high_price = float(m.group(1))
+
+                    m = re.match(r'.*close:"(.*?)"', item)
+                    stock.close_price = float(m.group(1))
+
+                    m = re.match(r'.*low:"(.*?)"', item)
+                    stock.low_price = float(m.group(1))
+
+                    m = re.match(r'.*volume:"(.*?)"', item)
+                    stock.volumn = int(m.group(1))
+
+                    result.data.append(stock)
+                break
+
+            except Exception, ex:
+                print ex.__str__()
+                time.sleep(self.wait_gap)
+                i = i + 1
+                if i == self.repeat_num:
+                    return None
+
+        return result
+
     def get_present_price(self, stockid):
 
         stock = stock_data()
@@ -91,8 +142,11 @@ class stock_fetcher(object):
 
 if __name__ == "__main__":
     fetcher = stock_fetcher()
-    result = fetcher.get_his_day_k("sh000300", "20001101", "20151115")
-    result.dump()
-    stock = fetcher.get_present_price("sh000300")
+    #result = fetcher.get_his_day_k("sh000300", "20001101", "20151115")
+    #result.dump()
+    #stock = fetcher.get_present_price("sh000300")
+    #print stock
 
-    print stock
+    result = fetcher.get_his_hour_k("sh000300")
+    #result.dump()
+
