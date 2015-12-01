@@ -148,5 +148,8 @@ if __name__ == "__main__":
     #print stock
 
     result = fetcher.get_his_hour_k("sh000300")
-    #result.dump()
+
+    result.dump()
+
+    #result.append_to_file("../data/sh000300_hour", result.data)
 

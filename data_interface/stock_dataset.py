@@ -34,6 +34,12 @@ class stock_dataset(object):
                 return item
         return None
 
+    def get_data_index(self, date_str):
+        for i in range(len(self.data)):
+            if self.data[i].date == date_str:
+                return i
+        return None
+
     def store_to_file(self, file_name):
 
         f = open(file_name, "w")
@@ -70,6 +76,10 @@ if __name__ == "__main__":
     print stock_set.get_data("2015-10-19")
     print stock_set.get_data("2000-10-19")
 
-    stock_set.store_to_file("./tmp")
-    stock_set.append_to_file("./tmp", stock_set.data)
+    print stock_set.get_data_index("2015-10-20")
+    print stock_set.get_data_index("2015-10-19")
+    print stock_set.get_data_index("2000-10-19")
+
+    #stock_set.store_to_file("./tmp")
+    #stock_set.append_to_file("./tmp", stock_set.data)
 
