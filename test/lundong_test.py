@@ -2,13 +2,24 @@
 #coding=utf-8
 
 import sys
+reload(sys)
 sys.path.append("..")
+sys.setdefaultencoding('utf-8')
+
+from pylab import *
+mpl.rcParams["font.sans-serif"] = ["SimHei"]
+mpl.rcParams["axes.unicode_minus"] = False
+
+import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from model.lundong import lundong
 from define import *
 from account_simulator import account_simulator
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
+
+import matplotlib.cbook as cbook
 
 def load_data(file_path):
     """
@@ -100,7 +111,7 @@ def pre_process_2(data1, data2, start_date_str, end_date_str):
     return
 
 
-def test(data1, data2, data1_name, data2_name, start_money, gap_days, trading_day):
+def test(data1, data2, data1_name, data2_name, start_money, gap_days, trading_day, show_pics):
     """
     lundong model test
     """
@@ -111,7 +122,6 @@ def test(data1, data2, data1_name, data2_name, start_money, gap_days, trading_da
     # Preprocess datasets
     print "preprocessing datasets..."
     pre_process(data1, data2)
-    #pre_process_2(data1, data2, "2007-02-04", "2008-02-04")
 
     print "Dataset1: %s, data_len=%d, start_date=%s, end_date=%s" % (data1_name, len(data1), data1[0][DATE_POS], data1[-1][DATE_POS])
     print "Dataset2: %s, data_len=%d, start_date=%s, end_date=%s" % (data2_name, len(data2), data2[0][DATE_POS], data2[-1][DATE_POS])
@@ -120,11 +130,26 @@ def test(data1, data2, data1_name, data2_name, start_money, gap_days, trading_da
     data1_close_price = [ item[CLOSE_PRICE_POS] for item in data1 ]
     data2_close_price = [ item[CLOSE_PRICE_POS] for item in data2 ]
 
-    plt.figure(1)
-    plt.subplot(311)
-    plt.plot(data1_close_price, 'b-', data2_close_price, 'r-')
-    plt.legend([data1_name, data2_name], loc="upper left")
-    plt.grid(True)
+    dates = [ datetime.strptime(item[DATE_POS], "%Y-%m-%d") for item in data1]
+
+    years = mdates.YearLocator()
+    months = mdates.MonthLocator()
+    yearsFmt = mdates.DateFormatter("%Y-%m")
+
+    #plt.figure(1)
+    #plt.subplot(311)
+    if show_pics:
+        fig, ax = plt.subplots()
+        ax.set_title("股指变化图")
+        ax.plot(dates, data1_close_price, 'b-', dates, data2_close_price, 'r-')
+        ax.xaxis.set_major_locator(years)
+        ax.xaxis.set_major_formatter(yearsFmt)
+        ax.xaxis.set_minor_locator(months)
+        ax.legend([data1_name, data2_name], loc="upper left")
+        ax.grid(True)
+        ax.set_xlim(dates[0], dates[-1] + timedelta(days=90))
+        #plt.xlim(0,len(data1_index)+50)
+        plt.show()
 
     # Initilize a lundong model, and get trading decisions by it
     lundong_model = lundong()
@@ -213,57 +238,99 @@ def test(data1, data2, data1_name, data2_name, start_money, gap_days, trading_da
 
             if item["choise"] == 0:
                 choise_0.append(item["data1_up"])
-                choise_0_index.append(i)
+                choise_0_index.append(dates[i])
             elif item["choise"] == 1:
                 choise_1.append(item["data2_up"])
-                choise_1_index.append(i)
+                choise_1_index.append(dates[i])
             elif item["choise"] == 2:
                 choise_2.append(0)
-                choise_2_index.append(i)
+                choise_2_index.append(dates[i])
 
         i = i + 1
 
-    plt.subplot(312)
-    plt.plot(range(len(data1_up)), data1_up, 'b-', range(len(data2_up)), data2_up, 'r-',\
-        choise_0_index, choise_0, 'bo', choise_1_index, choise_1, 'ro',\
-        choise_2_index, choise_2, 'r^')
-    #plt.plot(data1_up, 'b-', data2_up, 'r-', choise_0, 'bo', choise_1, 'r^')
-    plt.legend([data1_name, data2_name, "switch to:" + data1_name, "switch to:" + data2_name, "sell all"], loc="upper left")
-    plt.grid(True)
 
-    plt.subplot(313)
-    plt.plot([item / start_money for item in money], 'g-', \
-        [ float(item[CLOSE_PRICE_POS]) / float(data1[0][CLOSE_PRICE_POS]) for item in data1], 'b-', \
-        [ float(item[CLOSE_PRICE_POS]) / float(data2[0][CLOSE_PRICE_POS]) for item in data2], 'r-')
-    plt.legend(["model", data1_name, data2_name], loc="upper left")
-    plt.grid(True)
-    #plt.show()
+    if show_pics:
+        fig, ax = plt.subplots()
+        ax.set_title("股指涨幅与模型交易方案")
+        ax.plot(dates, data1_up, 'b-', dates, data2_up, 'r-',\
+            choise_0_index, choise_0, 'bo', choise_1_index, choise_1, 'ro',\
+            choise_2_index, choise_2, 'g^')
+        ax.xaxis.set_major_locator(years)
+        ax.xaxis.set_major_formatter(yearsFmt)
+        ax.xaxis.set_minor_locator(months)
+        ax.legend([data1_name, data2_name, "轮动到:" + data1_name, "轮动到:" + data2_name, "清仓"], loc="upper center")
+        ax.grid(True)
+        ax.set_xlim(dates[0], dates[-1] + timedelta(days=90))
+        #plt.xlim(0,len(data1_index)+50)
+        plt.show()
+
+    if show_pics:
+        fig, ax = plt.subplots()
+        ax.set_title("投资收益对比")
+        ax.plot(dates, [item / start_money for item in money], 'g-', \
+            dates, [ float(item[CLOSE_PRICE_POS]) / float(data1[0][CLOSE_PRICE_POS]) for item in data1], 'b-', \
+            dates, [ float(item[CLOSE_PRICE_POS]) / float(data2[0][CLOSE_PRICE_POS]) for item in data2], 'r-')
+        ax.xaxis.set_major_locator(years)
+        ax.xaxis.set_major_formatter(yearsFmt)
+        ax.xaxis.set_minor_locator(months)
+        ax.legend(["模型收益率", "单独投资 " + data1_name + " 收益率", "单独投资 " + data2_name + " 收益率"], loc="upper left")
+        ax.grid(True)
+        ax.set_xlim(dates[0], dates[-1] + timedelta(days=90))
+        #plt.xlim(0,len(data1_index)+50)
+        plt.show()
 
     account.dump()
 
-    return account.get_value() / start_money
+    return account.get_value() / start_money, float(data1[-1][CLOSE_PRICE_POS]) / float(data1[0][CLOSE_PRICE_POS]), float(data2[-1][CLOSE_PRICE_POS]) / float(data2[0][CLOSE_PRICE_POS])
+
 
 if __name__ == "__main__":
 
-    sh000905_data = load_data("../data/sh000905_day")
-    sh000300_data = load_data("../data/sh000300_day")
+    sh000905_data = load_data("../data/sh000905")
+    sh000300_data = load_data("../data/sh000300")
 
     #test(sh000905_data[-200:-1], sh000300_data[-200:-1], "sh000905", "sh000300", 100000)
     #test(sh000905_data[0:1000], sh000300_data[0:1000], "sh000905", "sh000300", 100000)
-    gain_rate = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, 28, 4)
-    plt.show()
+    '''
+    model_gain_rate, sh000905_gain_rate, sh000300_gain_rate = test(sh000905_data, sh000300_data, u"中证小盘500", u"沪深300", 100000, 28, 4, True)
 
-    """
+    print model_gain_rate
+    print sh000905_gain_rate
+    print sh000300_gain_rate
+    '''
+
+    '''
     gain_rates = []
-    for i in range(0,6):
-        result = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, 28, i)
+
+    for i in range(0,5):
+        result, tmp, tmp1 = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, 28, i, False)
         print "gap_days:", i, " gain_rates:", result
         gain_rates.append(result)
 
     print gain_rates
 
     plt.figure(2)
-    plt.plot(range(0,6), gain_rates, 'r-')
+    plt.title("一周内不同时间轮动的投资收益率")
+    plt.plot([1,2,3,4,5], gain_rates, 'r-')
+    plt.grid(True)
     plt.show()
-    """
+    '''
 
+    gain_rates = []
+
+    f = open("./gap_days", "w")
+
+    for i in range(0,60):
+        result, tmp, tmp1 = test(sh000905_data, sh000300_data, "sh000905", "sh000300", 100000, i, 4, False)
+        print "gap_days:", i, " gain_rates:", result
+        gain_rates.append(result)
+        f.write(str(result))
+        f.write("\n")
+
+    print gain_rates
+
+    plt.figure(2)
+    plt.title("不同评估周期的投资收益率")
+    plt.plot(range(1,61), gain_rates, 'r-')
+    plt.grid(True)
+    plt.show()
