@@ -37,7 +37,7 @@ class jisilu_fetcher(object):
                     tmp["descr"] = content["cell"]["fund_descr"]
                     tmp["profit_rate"] = content["cell"]["funda_profit_rt_next"]
                     tmp["price"] = content["cell"]["funda_current_price"]
-
+                    tmp["discount"] = content["cell"]["funda_discount_rt"]
                     result.append(tmp)
 
                 except Exception, ex:
