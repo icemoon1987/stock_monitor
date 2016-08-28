@@ -133,7 +133,7 @@ class levela_lundong_monitor(object):
         mail_detail = ""
         mail_detail += "A基金代码" + delim + "A基金名称" + delim + "当前价格" + delim + "修正收益率" + delim + "折价率" + "\n"
 
-        for item in result:
+        for item in result["last_result"][1]:
             mail_detail += item["id"] + delim + item["name"] + delim + item["price"] + delim + item["profit_rate"] + delim + item["discount"] + "\n"
 
         mail_detail += "\n"
@@ -187,11 +187,10 @@ if __name__ == '__main__':
 
     monitor = levela_lundong_monitor()
     result = monitor.monitor(5)
-
     #monitor.append_result_to_file("./tmp", result)
     #result = monitor.load_results_from_file("./tmp")
 
-    quit()
+    # quit()
 
     if len(result) > 0:
 
@@ -203,4 +202,4 @@ if __name__ == '__main__':
         mail_detail += "naopo我耐你哩~~~" + "\n"
         # mail.sendhtmlmail(['546674175@qq.com', '516563458@qq.com', 'sunada2005@163.com'], "A级基金轮动结果(耐你滴老公~~)",mail_detail.encode("utf-8", "ignore"))
         mail.sendhtmlmail(['sunada2005@163.com'], "A级基金轮动结果(耐你滴老公~~)",mail_detail.encode("utf-8", "ignore"))
-        print mail_detail
+        # print mail_detail
