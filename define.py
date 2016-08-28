@@ -9,10 +9,10 @@ LOW_PRICE_POS = 4
 VOLUMN_POS = 5
 
 #价值平均法：https://www.jisilu.cn/question/61866  https://www.jisilu.cn/question/61196
-GAP = 2000
+GAP = 1000
 DEAL_RATE = 0.0002
 EXPE_RATE = 0.02
-MAX_GAP = 10000  #MAX_GAP为GAP的5倍时回测效果较好；每月定投额应在[-MAX_GAP, MAX_GAP]之间
+MAX_GAP = 5000  #MAX_GAP为GAP的5倍时回测效果较好；每月定投额应在[-MAX_GAP, MAX_GAP]之间
 
 
 #以天为交易单位的海龟

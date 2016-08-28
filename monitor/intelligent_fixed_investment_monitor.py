@@ -22,76 +22,45 @@ class intelligent_fixed_investment_monitor(object):
         self.fi.get_last_result("../result/intelligent_fixed_investment_result")
         fetcher = stock_fetcher()
         self.fi.net = fetcher.get_present_price(code).close_price
-        # print "net: ", self.fi.net
 
         self.fi.code = code
-
         self.fi.no += 1
         self.fi.date = datetime.now().strftime("%Y-%m-%d")
-        # print "date: ", self.fi.date
 
-        new_sum = self.fi.sum * (1 + EXPE_RATE) + GAP
+        # new_sum = self.fi.sum * (1 + EXPE_RATE) + GAP
+        new_sum = self.fi.no * GAP * (1 + EXPE_RATE)
         now_sum = self.fi.share * self.fi.net
         self.fi.month_money = round(new_sum - now_sum, 6)
         self.fi.month_money = self.fi.month_money if self.fi.month_money < MAX_GAP else MAX_GAP
         self.fi.month_money = self.fi.month_money if self.fi.month_money > (MAX_GAP * -1) else (MAX_GAP * -1)
-        # print "month_money: ", self.fi.month_money
-
-        self.fi.sum_month_money += self.fi.month_money
-        self.fi.sum_month_money = round(self.fi.sum_month_money, 6)
-
 
         share = self.fi.month_money * (1 - DEAL_RATE) / self.fi.net
         self.fi.month_share = round(share, 6)
-        self.fi.share = round(self.fi.share + share, 6)
-        # print "share: ", self.fi.share
+        self.fi.share += self.fi.month_share
 
-        self.fi.sum = round(self.fi.net * self.fi.share, 6)
-
-        self.fi.profit = self.fi.sum - self.fi.sum_month_money
-        self.fi.profit = round(self.fi.profit, 6)
-        # print "profit: ", self.fi.profit
-
-        self.fi.profit_rate = (self.fi.profit / self.fi.sum_month_money) * 100
-        self.fi.profit_rate = round(self.fi.profit_rate, 2)
-        # print "profit_rate: ", self.fi.profit_rate
-        self.recode()
-
-    # 适合定投日在月末，回测使用
+    # 适合定投日在月末，回测使用 不考虑买卖share必须为整百的情况 https://www.jisilu.cn/question/61196
     def calc_money(self, code):
         self.fi.get_last_result("../result/intelligent_fixed_investment_result")
         end_date = datetime.now().strftime("%Y-%m-%d")
-        start_date = datetime.strptime(self.fi.date, "%Y-%m-%d") + timedelta(days=1)
+        start_date = datetime.strptime(self.fi.date, "%Y-%m-%d") + timedelta(days=5)
         start_date = start_date.strftime("%Y-%m-%d")
         fetcher = stock_fetcher()
-        # self.fi.net = fetcher.get_present_price("sh510500").close_price
-        # print "net: ", self.fi.net
 
-        # month_dic = {}
         time_arr = start_date.split("-")
         last_key = time_arr[0] + time_arr[1]
-        # month_dic[last_key] = 1
 
         new_dataset = fetcher.get_his_day_k(code, start_date, end_date)
         for item in new_dataset.data:
             time_arr = item.date.split("-")
             key = time_arr[0] + time_arr[1]
             # print "last_key: ", last_key, " key: ", key
-            # if(key in month_dic):
-            #     continue
-            # tmp = int(time_arr[2]) - int(date)
-            # if(tmp < 0):
-            #     continue
 
             if(key == last_key):
                 last_item = item
                 continue
 
-            # month_dic[last_key] = 1
             self.fi.code = code
             last_key = key
-            # print "date: ", last_item.date
-            # month_dic[key] = 1
 
             self.fi.no += 1
             self.fi.date = last_item.date
@@ -149,10 +118,25 @@ class intelligent_fixed_investment_monitor(object):
         detail += "当月收益：" + str(self.fi.profit) + "\n当月收益率：" + str(self.fi.profit_rate)
         return detail
 
+    def format_result2(self):
+        detail = ""
+        list = ['26','27','28','29','30','31']
+        tmp = datetime.now().strftime("%d")
+        if tmp in list:
+            detail += "Attention!\n月末最后一个交易日可能是今天哦！\n Attention!\n\n"
+        detail += "第" + str(self.fi.no) + "次定投" + "\n"
+        detail += "本期定投金额：" + str(self.fi.month_money)  + "\n"
+        detail += "建议定投价格：" + str(self.fi.net) + "\n"
+        detail += "建议定投份额：" + str(self.fi.month_share) + "\n"
+        detail += "累计定投份额：" + str(self.fi.share) + "\n"
+        return detail
+
 if __name__ == "__main__":
     ifim = intelligent_fixed_investment_monitor()
-    # ifim.calc_money("sh510500", "04")
-    # ifim.calc_money("sz399006")
-    ifim.calc_money_today("sh510500")
-    mail.sendmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_result().encode("utf-8", "ignore"))
-    print ifim.format_result()
+    # ifim.calc_money("sh510500", "04")   #etf500回测
+    # ifim.calc_money("sz399006")       #创业版指数回测
+    ifim.calc_money_today("sz159915")   #当天投资指导 创业版etf
+
+    mail.sendmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_result2().encode("utf-8", "ignore"))
+    # print ifim.format_result()
+    # print ifim.format_result2()
