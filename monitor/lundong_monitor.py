@@ -14,7 +14,7 @@ sys.setdefaultencoding('utf-8')
 
 if __name__ == '__main__':
 
-    mail_detail = "<h3>指数轮动模型结果：</h3>"
+    mail_detail = "<h3>1、指数轮动模型结果：</h3>"
 
     index_monitor = index_lundong_monitor()
     result = index_monitor.monitor(27)
@@ -22,12 +22,12 @@ if __name__ == '__main__':
 
     mail_detail += "\n"
 
-    mail_detail += "<h3>分级A轮动模型结果：</h3>"
+    mail_detail += "<h3>2、分级A轮动模型结果：</h3>"
     levela_monitor = levela_lundong_monitor()
     result = levela_monitor.monitor(5)
     mail_detail += levela_monitor.format_html_result(result)
 
-    mail_detail += "<h3>价值平均法定投:</h3>"
+    mail_detail += "<h3>3、价值平均法定投:</h3>"
     intelligent = intelligent_fixed_investment_monitor()
     intelligent.calc_money_today("sz159915")
     mail_detail += intelligent.format_format_html_result()
