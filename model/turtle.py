@@ -5,9 +5,10 @@ import sys
 sys.path.append("..")
 import urllib
 import myjson
-from datetime import *
+from datetime import datetime, date, timedelta
 import time 
 from define import *
+from data_interface.stock_dataset import stock_dataset
 
 class turtle(object):
     """
@@ -132,7 +133,7 @@ class turtle(object):
 
     def get_trading_plan3(self, dataset, date_str):
         """
-        策略
+        策略  https://www.jisilu.cn/question/66127
             1. 买入条件：收盘价超过60个交易日里面的盘中最高价（不是收盘价中的最高）
             2. 卖出条件：收盘价低于38个交易日里面的盘中最低价
             3. 其他时候维持原状。
@@ -154,16 +155,19 @@ class turtle(object):
         result["start_buy_date"] = dataset.data[0 - BUY_DAYS].date
         result["start_sell_date"] = dataset.data[0 - SELL_DAYS].date
         result["date"] = date_str
+        result["BUY_DAYS"] = str(BUY_DAYS)
+        result["SELL_DAYS"] = str(SELL_DAYS)
         result["choise"] = -1
         result["info"] = "unknown problem, do not trade"
         data = dataset.get_data(date_str)
+
         if data == None:
             result["choise"] = -2
             result["info"] = "date_str error"
             return result
 
         data_index = dataset.get_data_index(date_str)
-
+        # print "dataset.data[data_index]", dataset.data[data_index]
         result["close_price"] = dataset.data[data_index].close_price
         result["max_date"] = self.get_max_date(dataset, data_index, BUY_DAYS)
         result["min_date"] = self.get_min_date(dataset, data_index, SELL_DAYS)
@@ -173,11 +177,10 @@ class turtle(object):
         elif result["close_price"] < result["min_date"][0]:
             result["choise"] = 0
             result["info"] = "sell all"
-        elif result["close_price"] < result["max_date"][0] or result["close_price"] > result["min_date"][0]:
+        elif result["close_price"] < result["max_date"][0] and result["close_price"] > result["min_date"][0]:
             result["choise"] = 2
             result["info"] = "hold on"
         return result
 
 if __name__ == '__main__':
     pass
-

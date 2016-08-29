@@ -118,17 +118,21 @@ class intelligent_fixed_investment_monitor(object):
         detail += "当月收益：" + str(self.fi.profit) + "\n当月收益率：" + str(self.fi.profit_rate)
         return detail
 
-    def format_result2(self):
+    def format_format_html_result(self):
         detail = ""
         list = ['26','27','28','29','30','31']
         tmp = datetime.now().strftime("%d")
+
         if tmp in list:
-            detail += "Attention!\n月末最后一个交易日可能是今天哦！\n Attention!\n\n"
-        detail += "第" + str(self.fi.no) + "次定投" + "\n"
-        detail += "本期定投金额：" + str(self.fi.month_money)  + "\n"
-        detail += "建议定投价格：" + str(self.fi.net) + "\n"
-        detail += "建议定投份额：" + str(self.fi.month_share) + "\n"
-        detail += "累计定投份额：" + str(self.fi.share) + "\n"
+            detail += "<p><font color=red>========================================================== <br/>"
+            detail += "Attention! <br/> 月末最后一个交易日可能是今天哦！<br/> Attention! <br/>"
+            detail += "==========================================================</font></p>"
+        detail += "<p>第" + str(self.fi.no) + "次价值平均法定投" + "<br/>"
+        detail += "投资标的：" + str(self.fi.code) + " " + str(self.fi.name) + "<br/>"
+        detail += "建议定投金额：" + str(self.fi.month_money)  + "<br/>"
+        detail += "建议定投价格：" + str(self.fi.net) + "<br/>"
+        detail += "建议定投份额：" + str(self.fi.month_share) + "<br/>"
+        detail += "累计定投份额：" + str(self.fi.share) + "</p><br/>"
         return detail
 
 if __name__ == "__main__":
@@ -137,6 +141,5 @@ if __name__ == "__main__":
     # ifim.calc_money("sz399006")       #创业版指数回测
     ifim.calc_money_today("sz159915")   #当天投资指导 创业版etf
 
-    mail.sendmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_result2().encode("utf-8", "ignore"))
+    mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_format_html_result().encode("utf-8", "ignore"))
     # print ifim.format_result()
-    # print ifim.format_result2()
