@@ -171,6 +171,8 @@ class turtle(object):
         result["close_price"] = dataset.data[data_index].close_price
         result["max_date"] = self.get_max_date(dataset, data_index, BUY_DAYS)
         result["min_date"] = self.get_min_date(dataset, data_index, SELL_DAYS)
+        result["BUY_DAYS"] = str(BUY_DAYS)
+        result["SELL_DAYS"] = str(SELL_DAYS)
         if result["close_price"] > result["max_date"][0]:
             result["choise"] = 4
             result["info"] = "buy"
