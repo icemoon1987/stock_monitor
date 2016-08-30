@@ -23,20 +23,16 @@ class turtle_monitor:
         data_set = stock_dataset()
         data_set.load_from_file(code, "../data/" + code)
 
-        # fetcher = stock_fetcher()
-        # net = fetcher.get_present_price(code).close_price
-
-
-        # stock = stock_data()
-        # stock.close_price = net
-        # today = datetime.now().strftime("%Y-%m-%d")
-
+        #把今天的数据加入到data_set里
+        fetcher = stock_fetcher()
+        net = fetcher.get_present_price(code).close_price
+        stock = stock_data()
+        stock.close_price = net
         # today = datetime.now() - timedelta(days = 2)  #周末测试时使用
         today = datetime.now()
         today = today.strftime("%Y-%m-%d")
-
-        # stock.date = today
-        # data_set.data.append(stock)
+        stock.date = today
+        data_set.data.append(stock)
 
         turtle_plan3 = turtle()
         result = turtle_plan3.get_trading_plan3(data_set, today)
@@ -74,19 +70,20 @@ class turtle_monitor:
         f.close()
 
     def format_format_result(self, result):
-        detail = "today: " + result["date"] + "<br/>code:" + result["code"] + "<br/>file_end_date:" + result["end_date"] + \
+        detail = "今天: " + result["date"] + "<br/>投资标的:" + result["code"] + "<br/>最近加入文件的数据对应的交易日:" + result["file_end_date"] + \
                  "<br/>BUY_DAYS:" + result["BUY_DAYS"] + "<br/>SELL_DAYS:" + result["SELL_DAYS"] + \
                  "<br/>start_buy_date:" + result["start_buy_date"] + "<br/>start_sell_date:" + result["start_sell_date"] + \
-                 "<br/>close_price: " + str(result["close_price"]) + "<br/>choise:" + result["info"] + "<br/>"
+                 "<br/>现价: " + str(result["close_price"]) + "<br/>操作建议: " + result["info"] + "<br/>"
         if(result["choise"] >= 0):
-            detail += "max_date: " + str(result["max_date"]) + "<br/>min_date:" + str(result["min_date"])
+            detail += result["BUY_DAYS"] + "个交易日内的最高价:" + str(result["max_date"]) + "<br/>" + result["SELL_DAYS"] + "个交易日内的最低价:" + str(result["min_date"])
+        # detail = "today: " + result["date"] + "<br/>code:" + result["code"] + "<br/>file_end_date:" + result["file_end_date"]
         return detail
 
 
 if __name__ == "__main__":
     tmonitor = turtle_monitor()
     code = "sh000300"  #沪深300
-    result = tmonitor.monitor(code, "../result/turtle3_result", "|")
+    result = tmonitor.monitor(code)
 
     """
     choise:
