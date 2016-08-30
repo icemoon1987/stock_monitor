@@ -151,7 +151,7 @@ class turtle(object):
         """
         # Get stock data by date_str. If not exist, return.
         result = {}
-        result["end_date"] = dataset.data[-1].date
+        result["file_end_date"] = dataset.data[-2].date  #dataset.data[-1].date的数据为读取文件后加入的今天的数据
         result["start_buy_date"] = dataset.data[0 - BUY_DAYS].date
         result["start_sell_date"] = dataset.data[0 - SELL_DAYS].date
         result["date"] = date_str
@@ -167,7 +167,6 @@ class turtle(object):
             return result
 
         data_index = dataset.get_data_index(date_str)
-        # print "dataset.data[data_index]", dataset.data[data_index]
         result["close_price"] = dataset.data[data_index].close_price
         result["max_date"] = self.get_max_date(dataset, data_index, BUY_DAYS)
         result["min_date"] = self.get_min_date(dataset, data_index, SELL_DAYS)
