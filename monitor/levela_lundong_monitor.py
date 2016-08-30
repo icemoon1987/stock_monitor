@@ -168,17 +168,17 @@ class levela_lundong_monitor(object):
             for item in result["sell_list"]:
                 mail_detail += str(item["name"])
                 mail_detail += "、"
-            mail_detail += "</p><br/>"
+            mail_detail += "</p>"
 
         if len(result["buy_list"]) != 0:
             mail_detail += "<p>买入："
             for item in result["buy_list"]:
                 mail_detail += str(item["name"])
                 mail_detail += "、"
-            mail_detail += "</p><br/>"
+            mail_detail += "</p>"
 
         if len(result["sell_list"]) == 0 and len(result["buy_list"]) == 0:
-            mail_detail += "<p>保持仓位</p><br/>"
+            mail_detail += "<p>保持仓位</p>"
 
         return mail_detail
 
