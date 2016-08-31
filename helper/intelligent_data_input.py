@@ -13,7 +13,7 @@ if __name__ == '__main__':
         fi = fix_investment_data()
         fi.get_last_result("../result/intelligent_fixed_investment_result")
         sep = line.strip().split('|')
-        no = str(int(sep[0]) + 1)
+        no = str(fi.no + 1)
         date = sep[1]
         code = sep[2]
         name = sep[3]
