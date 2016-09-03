@@ -28,13 +28,11 @@ if __name__ == '__main__':
         fetcher = stock_fetcher()
         close = fetcher.get_present_price(code).close_price
         now_amount = close * share
-        profit = round(now_amount - amount_all, 6)
-        profit_rate = round(profit / amount_all,2)
 
         # print no,date,code,name,net,amount,cost,share
         record = ""
         record += no + '|' + date + '|' + code + '|' + name + '|' + net + '|' + str(month_amount) + '|' + str(amount_all) + '|'
-        record += str(month_share) + '|' + str(share) + '|' + str(now_amount) + '|' + str(profit) + '|' + str(profit_rate) + '\n'
+        record += str(month_share) + '|' + str(share) + '|' + str(now_amount) + '|\n'
 
         # print record
         f = open("../result/intelligent_fixed_investment_result", 'r+')

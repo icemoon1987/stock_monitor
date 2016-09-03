@@ -24,6 +24,10 @@ class fix_investment_data(object):
         f = open(file_name, "r")
         line = f.readline()
         f.close()
+        if line.startswith("#"):
+            self.no = 0
+            self.share = 0
+            return
         arr = line.strip().split(delim)
         self.no = int(arr[0])
         self.date = arr[1]
