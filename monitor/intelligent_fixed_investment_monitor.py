@@ -124,7 +124,7 @@ class intelligent_fixed_investment_monitor(object):
         tmp = datetime.now().strftime("%d")
 
         if tmp not in list:
-            return "今日无提示"
+            return "今日为非定投日，定投日安排在月末"
         detail += "<p><font color=red>========================================================== <br/>"
         detail += "Attention! <br/> 月末最后一个交易日可能是今天哦！<br/> Attention! <br/>"
         detail += "==========================================================</font></p>"
