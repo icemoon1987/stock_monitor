@@ -42,13 +42,12 @@ class turtle_monitor:
         line = f.readline()
         f.close()
         if line.startswith("#"):
+            result["share"] = 0
+            result["cost"] = 0
             return result
         arr = line.strip().split("|")
-        print "arr:", arr
-        share = arr[5]
-        cost = arr[6]
-        result["share"] = share
-        result["cost"] = cost
+        result["share"] = arr[5]
+        result["cost"] = arr[6]
         # if(result["choise"] == 4):  #buy
         #     result["share"] = round((money * (1 - DEAL_RATE) / result["close_price"]), 3)
         #     result["money"] = round(money * (1 - DEAL_RATE), 3)
@@ -78,7 +77,7 @@ class turtle_monitor:
                  "<br/>BUY_DAYS:" + result["BUY_DAYS"] + "<br/>SELL_DAYS:" + result["SELL_DAYS"] + \
                  "<br/>start_buy_date:" + result["start_buy_date"] + "<br/>start_sell_date:" + result["start_sell_date"] + \
                  "<br/>现在点位: " + str(result["close_price"]) + "<br/>操作建议: " + result["info"] + \
-                 "<br/>仓位：" + str(result["share"]) + "<br/>金额：" + result["cost"] + "<br/>"
+                 "<br/>持有仓位：" + str(result["share"]) + "<br/>金额：" + str(result["cost"]) + "<br/>"
         if(result["choise"] >= 0):
             detail += result["BUY_DAYS"] + "个交易日内的最高价:" + str(result["max_date"]) + "<br/>" + result["SELL_DAYS"] + "个交易日内的最低价:" + str(result["min_date"])
         # detail = "today: " + result["date"] + "<br/>code:" + result["code"] + "<br/>file_end_date:" + result["file_end_date"]
