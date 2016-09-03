@@ -38,13 +38,17 @@ class turtle_monitor:
         result = turtle_plan3.get_trading_plan3(data_set, today)
         result["code"] = code
 
-        # f = open(filename, "r+")
-        # line = f.readline()
-        # arr = line.strip().split(delim)
-        # print "arr:", arr
-        # share = arr[2]
-        # money = arr[3]
-        # profit = arr[4]
+        f = open("../result/turtle3_result", "r+")
+        line = f.readline()
+        f.close()
+        if line.startswith("#"):
+            return result
+        arr = line.strip().split("|")
+        print "arr:", arr
+        share = arr[5]
+        cost = arr[6]
+        result["share"] = share
+        result["cost"] = cost
         # if(result["choise"] == 4):  #buy
         #     result["share"] = round((money * (1 - DEAL_RATE) / result["close_price"]), 3)
         #     result["money"] = round(money * (1 - DEAL_RATE), 3)
@@ -70,10 +74,11 @@ class turtle_monitor:
         f.close()
 
     def format_format_result(self, result):
-        detail = "今天: " + result["date"] + "<br/>投资标的:" + result["code"] + "<br/>最近加入文件的数据对应的交易日:" + result["file_end_date"] + \
+        detail = "今天: " + result["date"] + "<br/>追踪指数:" + result["code"] + "<br/>最近加入文件的数据对应的交易日:" + result["file_end_date"] + \
                  "<br/>BUY_DAYS:" + result["BUY_DAYS"] + "<br/>SELL_DAYS:" + result["SELL_DAYS"] + \
                  "<br/>start_buy_date:" + result["start_buy_date"] + "<br/>start_sell_date:" + result["start_sell_date"] + \
-                 "<br/>现价: " + str(result["close_price"]) + "<br/>操作建议: " + result["info"] + "<br/>"
+                 "<br/>现在点位: " + str(result["close_price"]) + "<br/>操作建议: " + result["info"] + \
+                 "<br/>仓位：" + str(result["share"]) + "<br/>金额：" + result["cost"] + "<br/>"
         if(result["choise"] >= 0):
             detail += result["BUY_DAYS"] + "个交易日内的最高价:" + str(result["max_date"]) + "<br/>" + result["SELL_DAYS"] + "个交易日内的最低价:" + str(result["min_date"])
         # detail = "today: " + result["date"] + "<br/>code:" + result["code"] + "<br/>file_end_date:" + result["file_end_date"]
@@ -98,6 +103,6 @@ if __name__ == "__main__":
      """
     detail = tmonitor.format_format_result(result)
     #
-    # mail.sendmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",detail.encode("utf-8", "ignore"))
-    print detail
+    mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",detail.encode("utf-8", "ignore"))
+    # print detail
 
