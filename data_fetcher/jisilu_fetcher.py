@@ -50,6 +50,36 @@ class jisilu_fetcher(object):
 
         return result
 
+    def get_kezhuanzhai(self):
+        result = []
+
+        try:
+            url = "https://www.jisilu.cn/data/cbnew/cb_list/?___t=" + str(int(time.time() * 1000))
+            data = urllib.urlopen(url).read()
+
+            json_obj = myjson.read(data)
+            contents = json_obj["rows"]
+
+            for content in contents:
+                try:
+                    tmp = {}
+                    tmp["id"] = content["id"]
+                    tmp["name"] = content["cell"]["bond_nm"]
+                    tmp["price"] = content["cell"]["price"]
+                    tmp["premium_rt"] = content["cell"]["premium_rt"]
+                    tmp["ytm_rt_tax"] = content["cell"]["ytm_rt_tax"]
+                    result.append(tmp)
+
+                except Exception, ex:
+                    print ex.__str__()
+                    continue
+
+        except Exception, ex:
+            print ex.__str__()
+            return None
+
+        return result
+
 
 if __name__ == "__main__":
 
