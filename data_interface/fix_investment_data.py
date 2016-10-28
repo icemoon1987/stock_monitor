@@ -24,6 +24,10 @@ class fix_investment_data(object):
         f = open(file_name, "r")
         line = f.readline()
         f.close()
+        if line.startswith("#"):
+            self.no = 0
+            self.share = 0
+            return
         arr = line.strip().split(delim)
         self.no = int(arr[0])
         self.date = arr[1]
@@ -34,9 +38,6 @@ class fix_investment_data(object):
         self.sum_month_money = float(arr[6])
         self.month_share = float(arr[7])
         self.share = float(arr[8])
-        self.sum = float(arr[9])
-        self.profit = float(arr[10])
-        self.profit_rate = float(arr[11])
         return
 
 

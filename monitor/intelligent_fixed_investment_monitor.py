@@ -123,10 +123,11 @@ class intelligent_fixed_investment_monitor(object):
         list = ['26','27','28','29','30','31']
         tmp = datetime.now().strftime("%d")
 
-        if tmp in list:
-            detail += "<p><font color=red>========================================================== <br/>"
-            detail += "Attention! <br/> 月末最后一个交易日可能是今天哦！<br/> Attention! <br/>"
-            detail += "==========================================================</font></p>"
+        if tmp not in list:
+            return "今日为非定投日，定投日安排在月末"
+        detail += "<p><font color=red>========================================================== <br/>"
+        detail += "Attention! <br/> 月末最后一个交易日可能是今天哦！<br/> Attention! <br/>"
+        detail += "==========================================================</font></p>"
         detail += "<p>第" + str(self.fi.no) + "次价值平均法定投" + "<br/>"
         detail += "投资标的：" + str(self.fi.code) + " " + str(self.fi.name) + "<br/>"
         detail += "建议定投金额：" + str(self.fi.month_money)  + "<br/>"
