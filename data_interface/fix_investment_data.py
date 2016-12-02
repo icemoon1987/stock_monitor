@@ -35,7 +35,7 @@ class fix_investment_data(object):
         self.name = arr[3]
         self.net = arr[4]
         self.month_money = float(arr[5])
-        self.sum_month_money = float(arr[6])
+        self.sum_month_money = float(arr[6])*(-1)
         self.month_share = float(arr[7])
         self.share = float(arr[8])
         return
