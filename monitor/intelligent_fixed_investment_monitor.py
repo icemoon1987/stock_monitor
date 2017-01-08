@@ -22,17 +22,24 @@ class intelligent_fixed_investment_monitor(object):
         self.fi.get_last_result("../result/intelligent_fixed_investment_result")
         fetcher = stock_fetcher()
         self.fi.net = fetcher.get_present_price(code).close_price
+        print "net:" + str(self.fi.net)
 
         self.fi.code = code
         self.fi.no += 1
         self.fi.date = datetime.now().strftime("%Y-%m-%d")
 
-        # new_sum = self.fi.sum * (1 + EXPE_RATE) + GAP
-        new_sum = self.fi.no * GAP * (1 + EXPE_RATE)
+        new_sum = self.fi.sum_month_money * (1 + EXPE_RATE) + GAP
+        #new_sum = self.fi.no * GAP * (1 + EXPE_RATE)
+        print "new_sum:",new_sum
+
         now_sum = self.fi.share * self.fi.net
+        print "now_sum:", now_sum
+
         self.fi.month_money = round(new_sum - now_sum, 6)
         self.fi.month_money = self.fi.month_money if self.fi.month_money < MAX_GAP else MAX_GAP
         self.fi.month_money = self.fi.month_money if self.fi.month_money > (MAX_GAP * -1) else (MAX_GAP * -1)
+
+        print "month_money:" + str(self.fi.month_money)
 
         share = self.fi.month_money * (1 - DEAL_RATE) / self.fi.net
         self.fi.month_share = round(share, 6)
@@ -142,5 +149,5 @@ if __name__ == "__main__":
     # ifim.calc_money("sz399006")       #创业版指数回测
     ifim.calc_money_today("sz159915")   #当天投资指导 创业版etf
 
-    mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_format_html_result().encode("utf-8", "ignore"))
-    # print ifim.format_result()
+    #mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_format_html_result().encode("utf-8", "ignore"))
+    print ifim.format_result()

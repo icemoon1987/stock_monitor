@@ -20,7 +20,7 @@ if __name__ == '__main__':
         month_share = sep[4]
         net = sep[5]
         month_amount = sep[6]
-        amount_all = float(fi.sum_month_money) + float(month_amount)
+        amount_all = -1 * float(fi.sum_month_money) + float(month_amount)
         share = int(fi.share) + int(month_share)
 
         # print no,date,code,name,net,amount,cost,share
