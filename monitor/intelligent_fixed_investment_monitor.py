@@ -127,7 +127,7 @@ class intelligent_fixed_investment_monitor(object):
 
     def format_format_html_result(self):
         detail = ""
-        list = ['18','26','27','28','29','30','31']
+        list = ['26','27','28','29','30','31']
         tmp = datetime.now().strftime("%d")
 
         if tmp not in list:
