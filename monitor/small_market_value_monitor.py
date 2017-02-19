@@ -29,20 +29,6 @@ class small_market_value_monitor:
                 next_date += datetime.timedelta(days=1)
         return next_date
 
-        # tmp = "../result/small_market_value"
-        # self.__period = 20
-        # with open(tmp, 'r') as f:
-        #     lines = f.readlines()
-        #     line = lines[-1]
-        #     deal = json.loads(line)
-        #     date = datetime.datetime.strptime(deal["date"], "%Y-%m-%d")
-        #     next_date = date
-        #     for i in range(self.__period):
-        #         next_date += datetime.timedelta(days=1)
-        #         while not self.is_trade_date(next_date):
-        #             next_date += datetime.timedelta(days=1)
-        #     return next_date
-
     def is_trade_date(self, date):
         if date.weekday() == 5 or date.weekday() == 6:
             return False
@@ -64,5 +50,5 @@ class small_market_value_monitor:
 
 if __name__ == '__main__':
     smvm = small_market_value_monitor()
-    # print smvm.next_date()
+    print smvm.next_date()
     # print smvm.get_last_deal_date()
