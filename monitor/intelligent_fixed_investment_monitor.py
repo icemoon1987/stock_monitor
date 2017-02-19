@@ -20,6 +20,7 @@ class intelligent_fixed_investment_monitor(object):
     # 适合定投日在月末，定投使用
     def calc_money_today(self, code):
         self.fi.get_last_result("../result/intelligent_fixed_investment_result")
+        self.fi.last_deal_date = self.fi.date
         fetcher = stock_fetcher()
         self.fi.net = fetcher.get_present_price(code).close_price
         print "net:" + str(self.fi.net)
@@ -117,6 +118,7 @@ class intelligent_fixed_investment_monitor(object):
 
     def format_result(self):
         detail = "第" + str(self.fi.no) + "次定投   " + "\n"
+        detail += "上次交易日期为：" + str(self.fi.last_deal_date) + "\n"
         detail += "定投日：" + str(self.fi.date) + "\n"
         detail += "定投标的：" + str(self.fi.code) + "\n标的名称：" + str(self.fi.name) + "\n\n"
         detail += "定投价格指导价：" + str(self.fi.net) + "\n当期定投份额：" + str(self.fi.month_share) + "\n"
@@ -136,7 +138,7 @@ class intelligent_fixed_investment_monitor(object):
         detail += "Attention! <br/> 月末最后一个交易日可能是今天哦！<br/> Attention! <br/>"
         detail += "==========================================================</font></p>"
         detail += "<p>第" + str(self.fi.no) + "次价值平均法定投" + "<br/>"
-        detail += "<p>上次交易日期为：" + str(self.fi.date) + "<br/>"
+        detail += "<p>上次交易日期为：" + str(self.fi.last_deal_date) + "<br/>"
         detail += "投资标的：" + str(self.fi.code) + " " + str(self.fi.name) + "<br/>"
         detail += "每期定投金额为：" + GAP + "<br/>"
         detail += "建议本次定投金额：" + str(self.fi.month_money)  + "<br/>"
@@ -151,5 +153,5 @@ if __name__ == "__main__":
     # ifim.calc_money("sz399006")       #创业版指数回测
     ifim.calc_money_today("sz159915")   #当天投资指导 创业版etf
 
-    mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_format_html_result().encode("utf-8", "ignore"))
-    # print ifim.format_result()
+    # mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",ifim.format_format_html_result().encode("utf-8", "ignore"))
+    print ifim.format_result()
