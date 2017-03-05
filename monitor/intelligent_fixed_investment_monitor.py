@@ -140,7 +140,7 @@ class intelligent_fixed_investment_monitor(object):
         detail += "<p>第" + str(self.fi.no) + "次价值平均法定投" + "<br/>"
         detail += "<p>上次交易日期为：" + str(self.fi.last_deal_date) + "<br/>"
         detail += "投资标的：" + str(self.fi.code) + " " + str(self.fi.name) + "<br/>"
-        detail += "每期定投金额为：" + GAP + "<br/>"
+        detail += "每期定投金额为：" + str(GAP) + "<br/>"
         detail += "建议本次定投金额：" + str(self.fi.month_money)  + "<br/>"
         detail += "建议定投价格：" + str(self.fi.net) + "<br/>"
         detail += "建议本次定投份额：" + str(self.fi.month_share) + "<br/>"
