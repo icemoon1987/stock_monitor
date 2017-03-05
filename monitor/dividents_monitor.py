@@ -39,8 +39,8 @@ class Dividents_monitor:
         res = self.pick_best_stocks(self.cnt)
         lines = []
         tmp = '<table border="1">'
-        for line in lines:
-            ary = line.strip().decode("utf-8").split(",")
+        for line in res:
+            ary = line.decode("utf-8").split(",")
             tmp += "<tr>"
             tmp += "<td>" + "</td><td>".join(ary) + "</td>"
             tmp += "</tr>"
