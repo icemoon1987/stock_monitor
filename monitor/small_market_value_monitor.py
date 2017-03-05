@@ -51,8 +51,8 @@ class small_market_value_monitor:
 
     def get_stock_by_mktcap(self):
         lc = ts.get_today_all()
-        # lc.to_csv('a.txt',encoding="utf-8")
-        # lc = pd.read_csv('a.txt',encoding='utf-8')
+        lc.to_csv('a.txt',encoding="utf-8")
+        lc = pd.read_csv('a.txt',encoding='utf-8')
         lc_amount = lc.query('amount>10000000')  #交易额大于1kw
         lc_amount_except_ST = lc_amount[(lc_amount['name'].str.contains(self.__stRegex, regex=True))]
         res = lc_amount_except_ST.sort_values(by="mktcap").head(self.__stock_cnt * 3)
@@ -63,8 +63,8 @@ class small_market_value_monitor:
 
     def get_profit(self, stocks):
         stock_basics = ts.get_stock_basics()
-        # stock_basics.to_csv("b.txt", encoding='utf-8')
-        # stock_basics = pd.read_csv("b.txt", encoding="utf-8")
+        stock_basics.to_csv("b.txt", encoding='utf-8')
+        stock_basics = pd.read_csv("b.txt", encoding="utf-8")
         stock_basics.reset_index()
         return pd.merge(stocks, stock_basics, how="left", left_on="code", right_on="code")
 
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     smvm = small_market_value_monitor()
     # print smvm.next_date()
     # print smvm.get_last_deal_date()
-    # smvm.get_target()
+    #smvm.get_target()
     mail_detail = smvm.format_format_html_result()
-    # print mail_detail
-    mail.sendhtmlmail(['sunada2005@163.com','516563458@qq.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
+    #print mail_detail
+    #mail.sendhtmlmail(['sunada2005@163.com','516563458@qq.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
