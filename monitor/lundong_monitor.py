@@ -10,6 +10,7 @@ from levela_lundong_monitor import levela_lundong_monitor
 from intelligent_fixed_investment_monitor import  intelligent_fixed_investment_monitor
 from turtle_monitor import turtle_monitor
 from small_market_value_monitor import small_market_value_monitor
+from dividents_monitor import Dividents_monitor
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -27,18 +28,22 @@ if __name__ == '__main__':
     smvm = small_market_value_monitor()
     mail_detail += smvm.format_format_html_result()
 
-    mail_detail += "<h3>3、28指数轮动模型结果（广发基金账户）：</h3>"
+    mail_detail += "<h3>3、红利股轮动：</h3>"
+    dividend = Dividents_monitor()
+    mail_detail += dividend.format_format_html_result()
+
+    mail_detail += "<h3>4、28指数轮动模型结果（广发基金账户）：</h3>"
     index_monitor = index_lundong_monitor()
     result = index_monitor.monitor(27)
     mail_detail += index_monitor.format_html_result(result)
     mail_detail += "\n"
 
-    mail_detail += "<h3>4、分级A轮动模型结果（01证券账户）：</h3>"
+    mail_detail += "<h3>5、分级A轮动模型结果（01证券账户）：</h3>"
     levela_monitor = levela_lundong_monitor()
     result = levela_monitor.monitor(5)
     mail_detail += levela_monitor.format_html_result(result)
 
-    mail_detail += "<h3>5、沪深300海龟轮动（01证券账户）：</h3>"
+    mail_detail += "<h3>6、沪深300海龟轮动（01证券账户）：</h3>"
     tmonitor = turtle_monitor()
     code = "sh000300"  #沪深300
     result = tmonitor.monitor(code)
