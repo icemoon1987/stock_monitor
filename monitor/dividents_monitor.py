@@ -68,7 +68,7 @@ class Dividents_monitor:
             res.append(tmp)
         return res
 
-    def res_to_html(self):
+    def format_format_html_result(self):
         res = self.pick_best_stocks(self.cnt)
         tmp = '<table border="1">'
         for line in res:
@@ -85,5 +85,5 @@ if __name__ == "__main__":
     # print res
     # for r in res:
     #     print r
-    mail_detail = d.res_to_html()
+    mail_detail = d.format_format_html_result()
     mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
