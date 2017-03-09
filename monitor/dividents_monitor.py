@@ -9,14 +9,14 @@ import os
 import pandas as pd
 import tushare as ts
 import datetime
+import mail
 
 class Dividents_monitor:
     def __init__(self):
-        self.cnt = 4
+        self.cnt = 5
         self.total_value = 10
         self.volume = 1000
         self.npr = 0
-        self.eps_year = 3
 
     def get_stocks_from_jisilu(self, cnt):
         url = "https://www.jisilu.cn/data/stock/dividend_rate_list/?___t=" + str(int(time.time() * 1000))
@@ -29,11 +29,10 @@ class Dividents_monitor:
     流动性要求：20日均量不小于1000万
     流通股本不少于10亿
     利润率：公司的净利润必须为正。
-    盈利增长：考察期的过去十二个月的每股盈利，即EPS（TTM）必须大于三年前的数据。    
     '''
     def pick_best_stocks(self, cnt):
         stocks = self.get_stocks_from_jisilu(2 * cnt)
-        res = []
+        res = ["code,name,pb,pe,eps_growth_ttm,industry,dividend,roe"]
 
         if not os.path.exists("stock_basics.txt"):
             lc = ts.get_stock_basics()
@@ -49,31 +48,31 @@ class Dividents_monitor:
                 # print "volum:", stock_id
                 continue
             #流通股本
-            if stock_basics.query("code=='"+stock_id+"'")['outstanding'].iloc(0) < self.total_value:
+            if stock_basics.query("code=='"+stock_id+"'")['outstanding'].iloc[0] < self.total_value:
                 # print "total_value:", stock_id
                 continue
             #利润率
-            if stock_basics.query("code=='"+stock_id+"'")['npr'].iloc(0) < self.npr:
+            if stock_basics.query("code=='"+stock_id+"'")['npr'].iloc[0] < self.npr:
                 continue
-            #盈利增长
-            if not os.path.exists("stock_profit_201701.txt"):
-                ts.get_profit_data(2017, 1).to_csv("stock_profit_201701.txt", encoding="utf-8")
-            if not os.path.exists("stock_profit_201401.txt"):
-                ts.get_profit_data(2014, 1).to_csv("stock_profit_201401.txt", encoding="utf-8")
-            df_near = pd.read_csv("stock_profit_201701.txt", dtype=str,encoding="utf-8")
-            df_past = pd.read_csv("stock_profit_201401.txt", dtype=str, encoding="utf-8")
 
-            if df_near.query("code=='" + stock_id + "'")['esp'].iloc(0) < df_past("code=='" + stock_id + "'")['esp'].iloc(0):
-                continue
-            res.append(stock)
+            obj = stock["cell"]
+            tmp = ""
+            tmp += obj["stock_id"] + ","
+            tmp += obj["stock_nm"] + ","
+            tmp += obj["pb"] + ","
+            tmp += obj["pe"] + ","
+            tmp += obj["eps_growth_ttm"] + ","
+            tmp += str(stock_basics.query("code=='"+stock_id+"'")['industry'].iloc[0]) + ","
+            tmp += obj["dividend_rate"] + ","
+            tmp += obj["roe_ttm"]
+            res.append(tmp)
         return res
 
     def res_to_html(self):
         res = self.pick_best_stocks(self.cnt)
-        lines = []
         tmp = '<table border="1">'
         for line in res:
-            ary = line.decode("utf-8").split(",")
+            ary = line.split(",")
             tmp += "<tr>"
             tmp += "<td>" + "</td><td>".join(ary) + "</td>"
             tmp += "</tr>"
@@ -84,5 +83,7 @@ if __name__ == "__main__":
     d = Dividents_monitor()
     res = d.pick_best_stocks(d.cnt)
     # print res
-    for r in res:
-        print r["cell"]
+    # for r in res:
+    #     print r
+    mail_detail = d.res_to_html()
+    mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
