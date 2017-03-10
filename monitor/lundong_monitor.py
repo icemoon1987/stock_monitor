@@ -36,7 +36,10 @@ if __name__ == '__main__':
 
     mail_detail += "<h3>2、小市值轮动换仓建议：</h3>"
     smvm = small_market_value_monitor()
-    mail_detail += smvm.format_format_html_result()
+    try:
+        mail_detail += smvm.format_format_html_result()
+    except Exception, ex:
+        logging.debug(str(ex))
     logging.debug("small_market_value_monitor runs successfully!")
 
     mail_detail += "<h3>3、红利股轮动：</h3>"
