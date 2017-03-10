@@ -32,9 +32,10 @@ if __name__ == '__main__':
     intelligent = intelligent_fixed_investment_monitor()
     intelligent.calc_money_today("sz159915")
     mail_detail += intelligent.format_format_html_result()
+    mail_detail += "红利ETF & H股ETF（3k）可同一天定投\n"
     logging.debug("intelligent_fixed_investment_monitor runs successfully!")
 
-    mail_detail += "<h3>2、小市值轮动换仓建议：</h3>"
+    mail_detail += "<h3>2、小市值轮动换仓建议(2w)：</h3>"
     smvm = small_market_value_monitor()
     try:
         mail_detail += smvm.format_format_html_result()
@@ -42,7 +43,7 @@ if __name__ == '__main__':
         logging.debug(str(ex))
     logging.debug("small_market_value_monitor runs successfully!")
 
-    mail_detail += "<h3>3、红利股轮动：</h3>"
+    mail_detail += "<h3>3、红利股轮动(5w)：</h3>"
     dividend = Dividents_monitor()
     mail_detail += dividend.format_format_html_result()
     logging.debug("Dividents_monitor runs successfully!")
