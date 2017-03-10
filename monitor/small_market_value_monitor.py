@@ -109,7 +109,7 @@ if __name__ == '__main__':
     smvm = small_market_value_monitor()
     # print smvm.next_date()
     # print smvm.get_last_deal_date()
-    # smvm.get_target()
+    #smvm.get_target()
     mail_detail = smvm.format_format_html_result()
-    # print mail_detail
-    mail.sendhtmlmail(['sunada2005@163.com','516563458@qq.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
+    #print mail_detail
+    #mail.sendhtmlmail(['sunada2005@163.com','516563458@qq.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
