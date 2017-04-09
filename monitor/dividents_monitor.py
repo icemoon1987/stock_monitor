@@ -95,6 +95,8 @@ if __name__ == "__main__":
     # for r in res:
     #     print r
     mail_detail = d.format_format_html_result()
+    if os.path.exists("dividents_monitor_result"):
+        os.remove("dividents_monitor_result")
     with open("dividents_monitor_result", 'w') as f:
         f.write(mail_detail.encode("utf-8"))
 
