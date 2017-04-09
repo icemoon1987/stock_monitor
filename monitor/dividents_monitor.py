@@ -32,13 +32,16 @@ class Dividents_monitor:
     '''
     def pick_best_stocks(self, cnt):
         stocks = self.get_stocks_from_jisilu(2 * cnt)
+        if len(stocks) == 0:
+            return -1
         res = ["code,name,pb,pe,eps_growth_ttm,industry,dividend,roe"]
 
         if not os.path.exists("stock_basics.txt"):
             lc = ts.get_stock_basics()
             lc.to_csv('stock_basics.txt',encoding="utf-8")
         stock_basics = pd.read_csv('stock_basics.txt',dtype=str,encoding='utf-8')
-
+        if len(stock_basics) < 2:
+            return -2
         for stock in stocks:
             stock_id = stock["cell"]['stock_id']
             today = datetime.datetime.today().strftime("%Y-%m-%d")
@@ -70,6 +73,12 @@ class Dividents_monitor:
 
     def format_format_html_result(self):
         res = self.pick_best_stocks(self.cnt)
+        print res
+        if res == -1:
+            return "get data from jisilu failed"
+        elif res == -2:
+            return "get data from tushare failed"
+
         tmp = '<table border="1">'
         for line in res:
             ary = line.split(",")
@@ -81,9 +90,17 @@ class Dividents_monitor:
 
 if __name__ == "__main__":
     d = Dividents_monitor()
-    res = d.pick_best_stocks(d.cnt)
+    # res = d.pick_best_stocks(d.cnt)
     # print res
     # for r in res:
     #     print r
     mail_detail = d.format_format_html_result()
-    mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
+    with open("dividents_monitor_result", 'w') as f:
+        f.write(mail_detail.encode("utf-8"))
+
+    # mail_detail_from_file = ""
+    # with open("dividents_monitor_result", 'r') as fr:
+    #     mail_detail_from_file = fr.readline()
+
+    # print mail_detail
+    # mail.sendhtmlmail(['sunada2005@163.com'], "轮动模型结果(耐你滴老公~)",mail_detail_from_file.encode("utf-8", "ignore"))

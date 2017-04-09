@@ -32,7 +32,7 @@ if __name__ == '__main__':
     intelligent = intelligent_fixed_investment_monitor()
     intelligent.calc_money_today("sz159915")
     mail_detail += intelligent.format_format_html_result()
-    mail_detail += "红利ETF & H股ETF（3k）可同一天定投\n"
+    mail_detail += "\n红利ETF & H股ETF（3k）可同一天定投\n"
     logging.debug("intelligent_fixed_investment_monitor runs successfully!")
 
     mail_detail += "<h3>2、小市值轮动换仓建议(2w)：</h3>"
@@ -44,8 +44,10 @@ if __name__ == '__main__':
     logging.debug("small_market_value_monitor runs successfully!")
 
     mail_detail += "<h3>3、红利股轮动(5w)：</h3>"
-    dividend = Dividents_monitor()
-    mail_detail += dividend.format_format_html_result()
+    mail_detail_from_file = ""
+    with open("dividents_monitor_result", 'r') as fr:
+        mail_detail_from_file = fr.readline()
+    mail_detail += mail_detail_from_file
     logging.debug("Dividents_monitor runs successfully!")
 
     mail_detail += "<h3>4、28指数轮动模型结果（广发基金账户）：</h3>"
@@ -70,7 +72,7 @@ if __name__ == '__main__':
     # mail.sendhtmlmail(['546674175@qq.com', '182101630@qq.com', '81616822@qq.com', '373894584@qq.com'], "轮动模型结果(潘文海)",mail_detail.encode("utf-8", "ignore"))
 
     #mail.sendhtmlmail(['546674175@qq.com', '516563458@qq.com', 'sunada2005@163.com'], "轮动模型结果(耐你滴老公)",mail_detail.encode("utf-8", "ignore"))
-
+    # print mail_detail
     mail.sendhtmlmail(['sunada2005@163.com','516563458@qq.com'], "轮动模型结果(耐你滴老公~)",mail_detail.encode("utf-8", "ignore"))
 
     # print mail_detail
